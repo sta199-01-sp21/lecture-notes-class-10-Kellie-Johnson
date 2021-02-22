@@ -1,11 +1,16 @@
 ---
 title: "Introduction to probability"
-author: ""
-date: ""
+author: "Kellie Johnson"
+date: "2/22/21"
 output: html_document
 editor_options: 
   chunk_output_type: console
 ---
+
+```{r}
+library(usethis)
+use_git_config(user.name= "Kellie-Johnson", user.email="kaj56@duke.edu")
+```
 
 ```{r global_options, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE,
@@ -27,6 +32,7 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE,
 
 ```{r packages}
 library(tidyverse)
+install.packages("vcd")
 library(vcd) # used for Arthritis data
 ```
 
@@ -50,16 +56,26 @@ xtabs(~ Treatment + Improved, data = Arthritis) %>%
 
 - How many patients were enrolled in the clinical trial?
 
+  There were 84 patients.
+
 - What is the probability a randomly selected patient received the placebo?
+
+  43/84 or 52% chance. 
 
 - What is the probability a randomly selected patient received the placebo
   and had a marked improvement?
   
+  7/84 or 8.3% chance
+  
 - What is the probability a randomly selected patient received the placebo
   and the treatment?
   
+  0/84, 0%. 
+  
 - What is the probability a randomly selected patient had some improvement or
   was on the treatment?
+  
+  48/84 or 57.1%
 
 ## Using computer simulations to calculate probabilities
 
@@ -75,6 +91,8 @@ marbles <- c("red", "red", "white", "red", "blue", "blue", "red", "blue")
 Suppose we draw a single marble from our imaginary box, where all the marbles
 are equally likely to be selected. What is the probability the marble is blue? 
 How about white?
+
+3/8 or 37.5% for blue and 1/8 or 12.5% for white.
 
 We can simulate this "drawing" with the `sample()` function.
 
@@ -101,6 +119,8 @@ prop.table(counts)
 ```
 
 How close is this value to the "true" probability?
+
+This is very close to the calculated probability. 
 
 **To summarize our process:**
 
@@ -132,6 +152,8 @@ two_draw_results
 How can we add a variable to `two_draw_results` to see if `draw_1` and `draw_2`
 match?
 
+We can add the variable using the mutate command. 
+
 ```{r identify_matches}
 two_draw_results <- two_draw_results %>% 
   mutate(color_match = draw_1 == draw_2)
@@ -158,15 +180,24 @@ Perform a simulation to compute this empirical probability.
 Write down your guess to the answer before you calculate it.
 
 ```{r simulate_rolls}
+roll_results <- tibble(
+  die_1 = replicate (n=1000, expr = sample(1:6, size = 1)), 
+  die_2 = replicate (n=1000, expr = sample(1:6, size = 1))
+)
 
 ```
 
 ```{r identify_events}
-
+roll_results <- roll_results %>% 
+  mutate(event_1 = die_1 ^ 2 == die_2, 
+         event_2 = abs(die_1 - die_2) == 4)
+roll_results
 ```
 
 ```{r summarize_rolls}
-
+roll_results %>%
+  summarize(event_1_prob = mean(event_1), 
+            event_2_prob = mean(event_2))
 ```
 
 ## Additional Resources-please look at before Weds.
